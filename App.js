@@ -8,26 +8,36 @@ import {
   FlatList,
 } from "react-native";
 
-
 import { FontAwesome } from "@expo/vector-icons";
 
-import Tarefa from './src/tarefa'
+import Tarefa from "./src/tarefa";
 
 export default function App() {
   const [tarefa, setTarefa] = useState("");
-  const [list, setList] = useState([
-    {
-      key: '1',
-      item: "Ser linda"
-    },
-    {
-      key: '2',
-      item: "Arrasar em tudo"
-    },
-  ]);
+  const [list, setList] = useState([]);
 
   function handleAdd() {
-    alert(tarefa);
+    if (tarefa === "") {
+      return;
+    }
+
+    const dados ={
+      key: Date.now(),
+      item: tarefa,
+    }
+
+    setList(oldArray => [dados, ...oldArray])
+
+    setTarefa("")
+  }
+
+
+  function handleDelete(item){
+    let filtroItem = list.filter( (tarefa)=> {
+      return(tarefa.item !== item)
+    })
+
+    setList(filtroItem)
   }
 
   return (
@@ -49,11 +59,10 @@ export default function App() {
 
       <FlatList
         data={list}
-        keyExtractor={ (item)=> item.key}
-        renderItem={ ({item}) => <Tarefa data={item} /> }
+        keyExtractor={(item) => item.key}
+        renderItem={({ item }) => <Tarefa data={item} deleteItem={ () => handleDelete(item.item)} />}
         style={styles.list}
       />
-
     </View>
   );
 }
@@ -84,7 +93,7 @@ const styles = StyleSheet.create({
     width: "75%",
     backgroundColor: "#FBFBFB",
     height: 44,
-    borderRadius: 4,  
+    borderRadius: 4,
     paddingHorizontal: 8,
   },
   buttonAdd: {
@@ -96,7 +105,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  list:{
+  list: {
     flex: 1,
     backgroundColor: "#fff",
     paddingStart: "4%",
